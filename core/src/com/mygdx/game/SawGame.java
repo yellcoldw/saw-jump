@@ -154,63 +154,86 @@ public class SawGame extends Game {
 			ballsSpeed.add(new Vector2(randomSpeed, randomSpeed2));
 		}
 	}
+
 	@Override
-	public void render () {
+	public void render() {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		checkCollision();
-		checkGold();
+
 		if (isDead) {
-			batch.begin();
-			font.setColor(1,0,0,1);
-			font.getData().setScale(10);
-			font.draw(batch,"GAME OVER",0,HEIGHT/2f);
-			batch.end();
-		}
-		else {
-			totalTime += Gdx.graphics.getDeltaTime();
-			timer -= Gdx.graphics.getDeltaTime();
-			if (timer <=0) {
-				timer = 0;
-				timer2 ++;
-				if (timer2%50==0) {
-					createBall(1);
-				}
-			}
-			updateBalls();
-			addMarks();
-			if (totalTime >= 2.5f) {
-				totalTime-= 2.5f;
-				createBall(2);
-			}
-			checkButtons();
-			batch.begin();
-			font.setColor(1,0,1,1);
-			font.getData().setScale(10);
-			font.draw(batch,Integer.toString(score),0,HEIGHT-50);
-			font.draw(batch,Integer.toString((int)timer),WIDTH-300,HEIGHT-50);
-			player.Draw(batch);
-			batch.end();
-			shape.begin(ShapeRenderer.ShapeType.Filled);
-			ground.Draw(shape);
-			shape.setColor(1,1,1,1);
-			for (int i = 0; i < balls.size(); i++) {
-				if (!mark.get(i)) {
-					shape.circle(balls.get(i).x,balls.get(i).y,50);
-				}
-			}
-			shape.setColor(0,1,0,1);
-			for (int i = 0; i < balls.size(); i++) {
-				if (mark.get(i)) {
-					shape.circle(balls.get(i).x,balls.get(i).y,50);
-				}
-			}
-			shape.setColor(1,1,0,1);
-			for (int i = 0; i < gold.size(); i++) {
-				shape.rect(gold.get(i).x,gold.get(i).y,40,40);
-			}
-			shape.end();
+			renderGameOver();
+		} else {
+			updateGameLogic();
+			renderGame();
 		}
 	}
+
+	private void renderGameOver() {
+		batch.begin();
+		font.setColor(1, 0, 0, 1);
+		font.getData().setScale(10);
+		font.draw(batch, "GAME OVER", 0, HEIGHT / 2f);
+		batch.end();
+	}
+
+	private void updateGameLogic() {
+		totalTime += Gdx.graphics.getDeltaTime();
+		timer -= Gdx.graphics.getDeltaTime();
+
+		if (timer <= 0) {
+			timer = 0;
+			timer2++;
+			if (timer2 % 50 == 0) {
+				createBall(1);
+			}
+		}
+
+		updateBalls();
+		addMarks();
+
+		if (totalTime >= 2.5f) {
+			totalTime -= 2.5f;
+			createBall(2);
+		}
+
+		checkButtons();
+	}
+
+	private void renderGame() {
+		batch.begin();
+		font.setColor(1, 0, 1, 1);
+		font.getData().setScale(10);
+		font.draw(batch, Integer.toString(score), 0, HEIGHT - 50);
+		font.draw(batch, Integer.toString((int) timer), WIDTH - 300, HEIGHT - 50);
+		player.Draw(batch);
+		batch.end();
+
+		shape.begin(ShapeRenderer.ShapeType.Filled);
+		ground.Draw(shape);
+		shape.setColor(1, 1, 1, 1);
+
+		for (int i = 0; i < balls.size(); i++) {
+			if (!mark.get(i)) {
+				shape.circle(balls.get(i).x, balls.get(i).y, 50);
+			}
+		}
+
+		shape.setColor(0, 1, 0, 1);
+
+		for (int i = 0; i < balls.size(); i++) {
+			if (mark.get(i)) {
+				shape.circle(balls.get(i).x, balls.get(i).y, 50);
+			}
+		}
+
+		shape.setColor(1, 1, 0, 1);
+
+		for (int i = 0; i < gold.size(); i++) {
+			shape.rect(gold.get(i).x, gold.get(i).y, 40, 40);
+		}
+
+		shape.end();
+	}
+
 
 	@Override
 	public void dispose () {
