@@ -2,20 +2,13 @@ package com.mygdx.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.InputListener;
-import com.badlogic.gdx.scenes.scene2d.Touchable;
-import com.badlogic.gdx.scenes.scene2d.actions.MoveByAction;
-
-import java.util.HashMap;
-import java.util.Vector;
+import com.sun.org.apache.bcel.internal.Const;
 
 public class Player {
+    public boolean isDead;
     public Vector2 position;
     public Sprite sprite;
     public float speed = 1500;
@@ -24,17 +17,23 @@ public class Player {
     public int jumpSpeed = 2500;
     public int fallSpeed = 800;
     public int baseFallSpeed = 800;
-    public int ground = 600;
     public boolean prevJumpKey;
-    public SawGame game;
+    public GameLogic logic;
+    private boolean isAlive = true;
     public Vector2 prevPosition;
-    public Player(Texture img,SawGame game) {
-        this.game = game;
+    public Player(Texture img,GameLogic logic) {
+        this.logic = logic;
         sprite = new Sprite(img);
-        position = new Vector2(Gdx.graphics.getWidth()/2f,sprite.getScaleY()*sprite.getHeight()/2);
+        position = new Vector2(Constants.WIDTH.value/2f,sprite.getHeight()/2);
         prevPosition = new Vector2(0,0);
     }
-    public void Update(float deltaTime){
+    public void setAlive(boolean b) {
+        isAlive = b;
+    }
+    public boolean getAlive() {
+        return isAlive;
+    }
+    public void update(float deltaTime){
         if (Buttons.LEFT.isPressed) {
             position.x -= deltaTime * speed;
             sprite.setScale(-1);
@@ -55,7 +54,7 @@ public class Player {
             }
         }
         else {
-            if (position.y == ground) {
+            if (position.y == Constants.GROUND_HEIGHT.value) {
                 jumpCounter = 0.35f;
                 jumpCount = 2;
             }
@@ -64,26 +63,25 @@ public class Player {
             }
         }
         position.y -= deltaTime * fallSpeed;
-        position.x = Math.min(position.x,Gdx.graphics.getWidth()-sprite.getWidth());
+        position.x = Math.min(position.x,Constants.WIDTH.value - sprite.getWidth());
         position.x = Math.max(position.x,0);
-        position.y = Math.max(ground,position.y);
-        position.y = Math.min(position.y, Gdx.graphics.getHeight()*5/6f);
-        if (position.y != ground) {
+        position.y = Math.max(Constants.GROUND_HEIGHT.value, position.y);
+        position.y = Math.min(position.y, Constants.HEIGHT.value*5/6f);
+        if (position.y != Constants.GROUND_HEIGHT.value) {
             fallSpeed += 10;
         }
         else {
             fallSpeed = baseFallSpeed;
         }
-        if ( prevPosition.y > position.y && position.y == ground) {
-            game.explode();
+        if (prevPosition.y > position.y && position.y == Constants.GROUND_HEIGHT.value) {
+            logic.balls.explode();
         }
         fallSpeed = Math.min(fallSpeed,1000);
         prevJumpKey = Buttons.JUMP.isPressed;
         prevPosition.x = position.x;
         prevPosition.y = position.y;
     }
-    public void Draw(SpriteBatch batch) {
-        Update(Gdx.graphics.getDeltaTime());
+    public void draw(SpriteBatch batch) {
         sprite.setPosition(position.x, position.y);
         sprite.draw(batch);
     }

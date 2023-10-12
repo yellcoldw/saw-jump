@@ -25,7 +25,7 @@ public class GameInput implements InputProcessor {
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        screenY = game.HEIGHT - screenY;
+        screenY = Constants.HEIGHT.value - screenY;
         game.inputs.get(pointer).x = screenX;
         game.inputs.get(pointer).y = screenY;
         return true;
@@ -33,21 +33,21 @@ public class GameInput implements InputProcessor {
 
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-        game.inputs.get(pointer).x = 0;
-        game.inputs.get(pointer).y = 0;
+        game.inputs.get(pointer).x = -1;
+        game.inputs.get(pointer).y = -1;
         return true;
     }
 
     @Override
     public boolean touchCancelled(int screenX, int screenY, int pointer, int button) {
-        game.inputs.get(pointer).x = 0;
-        game.inputs.get(pointer).y = 0;
+        game.inputs.get(pointer).x = -1;
+        game.inputs.get(pointer).y = -1;
         return true;
     }
 
     @Override
     public boolean touchDragged(int screenX, int screenY, int pointer) {
-        screenY = game.HEIGHT - screenY;
+        screenY = Constants.HEIGHT.value - screenY;
         game.inputs.get(pointer).x = screenX;
         game.inputs.get(pointer).y = screenY;
         return true;
