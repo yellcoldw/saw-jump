@@ -1,6 +1,6 @@
 # Saw Jump
 
-![Saw Jump Banner](./assets/sprites/badlogic.jpg)
+![Saw Jump Banner](./assets/sprites/square.png)
 
 ## Table of Contents
 - [Introduction](#introduction)
